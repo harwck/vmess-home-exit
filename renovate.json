@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "docker-compose": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "linuxserver images use <major>.<minor>.<yyyymmdd> tags",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/wireguard"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d{8})$"
+    },
+    {
+      "description": "sing-box: production releases only, skip -alpha/-beta/-rc",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/sagernet/sing-box"],
+      "versioning": "semver",
+      "ignoreUnstable": true
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "inbounds": [
+    {
+      "type": "vless",
+      "tag": "vless-in",
+      "listen": "::",
+      "listen_port": 443,
+      "users": [
+        {
+          "uuid": "${VLESS_UUID}",
+          "flow": "xtls-rprx-vision"
+        }
+      ],
+      "tls": {
+        "enabled": true,
+        "server_name": "www.microsoft.com",
+        "reality": {
+          "enabled": true,
+          "handshake": {
+            "server": "www.microsoft.com",
+            "server_port": 443
+          },
+          "private_key": "${REALITY_PRIVATE_KEY}",
+          "short_id": [
+            "${REALITY_SHORT_ID}"
+          ]
+        }
+      }
+    }
+  ],
+  "endpoints": [
+    {
+      "type": "wireguard",
+      "tag": "wg-home",
+      "system": false,
+      "mtu": 1408,
+      "address": [
+        "10.10.0.1/32"
+      ],
+      "private_key": "${VPS_WG_PRIVATE_KEY}",
+      "listen_port": 51820,
+      "peers": [
+        {
+          "public_key": "${HOME_WG_PUBLIC_KEY}",
+          "allowed_ips": [
+            "0.0.0.0/0",
+            "::/0"
+          ],
+          "persistent_keepalive_interval": 25
+        }
+      ]
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": [
+          "vless-in"
+        ],
+        "outbound": "wg-home"
+      }
+    ],
+    "final": "wg-home"
+  }
+}

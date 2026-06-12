@@ -1,0 +1,10 @@
+home-server/wireguard/coredns/
+home-server/wireguard/templates/
+
+# Secrets: ./gen-secrets.sh writes .env, then ./render.sh generates the real
+# configs below. Never commit .env, its backups, or the rendered files.
+.env
+.env.bak.*
+home-server/wireguard/wg_confs/wg0.conf
+vps/sing-box/config.json
+client/sing-box-phone.json

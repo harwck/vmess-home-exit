@@ -1,0 +1,32 @@
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:1.0.20250521
+    container_name: ss-tunnel-home
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      PUID: ${USER_ID}
+      PGID: ${GROUP_ID}
+      TZ: Asia/Tokyo
+    volumes:
+      - ./wireguard:/config
+      - /lib/modules:/lib/modules:ro
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    # No published ports: the home server only dials OUT to the VPS.
+    # uses the wg0.conf placed in ./wireguard/wg_confs/
+    networks:
+      # Join AdGuard Home's bridge so tunnel DNS reaches it container-to-container,
+      # bypassing the host INPUT firewall that silently drops container->host :53.
+      default: {}
+      adguardhome: {}
+    labels:
+      wud.tag.include: ^\d+\.\d+\.\d{8}$
+
+networks:
+  adguardhome:
+    external: true
+    name: adguardhome

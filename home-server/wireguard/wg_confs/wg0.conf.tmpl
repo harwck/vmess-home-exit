@@ -1,0 +1,36 @@
+# Home Server WireGuard config — dials OUT to the VPS (home has no public IP).
+#
+# Generated from this template by ./render.sh — do not edit wg0.conf directly.
+#
+# Traffic flow on this box:
+#   wg0 (from VPS)  ->  PostUp NAT/MASQUERADE  ->  residential WAN  ->  Internet
+#
+# The home server is the EXIT. The internet sees your residential IP.
+
+[Interface]
+# Home server's address inside the tunnel.
+Address = 10.10.0.2/32
+PrivateKey = ${HOME_WG_PRIVATE_KEY}
+
+# Forward + NAT: traffic from the tunnel subnet is masqueraded on egress.
+# These rules run INSIDE the linuxserver/wireguard container's network namespace,
+# where the egress interface is the container's own veth (not the host WAN). We
+# masquerade by SOURCE SUBNET only (no -o <iface>), so it works regardless of the
+# interface name; Docker's own NAT then forwards from the container out to the WAN.
+# ip_forward is set via the compose `sysctls:` block, not here (a failed PostUp
+# command tears the whole tunnel down).
+# PostUp   = sysctl -w net.ipv4.ip_forward=1
+PostUp   = iptables -A FORWARD -i wg0 -j ACCEPT
+PostUp   = iptables -A FORWARD -o wg0 -j ACCEPT
+PostUp   = iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+PostDown = iptables -D FORWARD -o wg0 -j ACCEPT
+PostDown = iptables -t nat -D POSTROUTING -s 10.10.0.0/24 -j MASQUERADE
+
+[Peer]
+# The VPS. Home dials out to it; PersistentKeepalive keeps the NAT pinhole open
+# so the VPS can push return + client traffic back down the tunnel.
+PublicKey = ${VPS_WG_PUBLIC_KEY}
+Endpoint = ${VPS_IP}:51820
+AllowedIPs = 10.10.0.0/24
+PersistentKeepalive = 25
