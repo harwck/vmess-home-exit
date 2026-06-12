@@ -10,10 +10,30 @@
         "server": "172.30.0.53",
         "server_port": 53,
         "detour": "proxy"
+      },
+      {
+        "type": "local",
+        "tag": "dns-local"
       }
     ],
-    "strategy": "ipv4_only",
-    "independent_cache": true
+    "rules": [
+      {
+        "domain": [
+          "captive.apple.com",
+          "connectivitycheck.gstatic.com",
+          "connectivitycheck.android.com",
+          "www.msftconnecttest.com",
+          "www.msftncsi.com",
+          "dns.msftncsi.com",
+          "detectportal.firefox.com"
+        ],
+        "domain_suffix": [
+          ".clients3.google.com"
+        ],
+        "server": "dns-local"
+      }
+    ],
+    "strategy": "ipv4_only"
   },
   "inbounds": [
     {
@@ -62,9 +82,25 @@
       {
         "protocol": "dns",
         "action": "hijack-dns"
+      },
+      {
+        "domain": [
+          "captive.apple.com",
+          "connectivitycheck.gstatic.com",
+          "connectivitycheck.android.com",
+          "www.msftconnecttest.com",
+          "www.msftncsi.com",
+          "dns.msftncsi.com",
+          "detectportal.firefox.com"
+        ],
+        "domain_suffix": [
+          ".clients3.google.com"
+        ],
+        "outbound": "direct"
       }
     ],
     "final": "proxy",
+    "default_domain_resolver": "dns-local",
     "auto_detect_interface": true
   }
 }
