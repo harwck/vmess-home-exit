@@ -1,9 +1,12 @@
-# VLESS+REALITY Tunnel — phone → VPS → home server → Internet
+# VLESS+REALITY -> WireGuard Tunnel
 
-Tunnel **all** phone traffic over **VLESS+REALITY** (a genuine TLS 1.3 connection on
+Tunnel traffic over **VLESS+REALITY** (a genuine TLS 1.3 connection on
 port 443 that mimics a real website) to a public-IP **VPS**, which relays it over
 **WireGuard** to your **home server**, which is the **Internet exit**. The public-facing
 source IP is your **residential home IP**.
+
+This is helpful for bypassing UDP blocks on Public Wi-Fi, it disguises all traffic as real HTTPS and dials to your VPS on port 443, 
+with TLS handshakes relayed from a real domain (e.g. `www.microsoft.com`) to defeat DPI and active probing.
 
 ```
  Phone (sing-box, TUN)  --VLESS+REALITY/TCP 443-->  VPS (public IP)  --WireGuard-->  Home server  -->  Internet
@@ -162,6 +165,9 @@ Docker bridge**:
 In AdGuard → Settings → DNS settings, ensure **Listen interfaces** = All, and **Access
 settings → Allowed clients** is empty (or includes `172.30.0.0/24`), or queries are
 silently dropped.
+
+> [!NOTE]
+> You need to setup Adguard Home separately (not included in this repo) and ensure it's running on the same Docker host as the home WireGuard container, with the shared `adguardhome` bridge as described above.
 
 ## Verification done in this repo
 
