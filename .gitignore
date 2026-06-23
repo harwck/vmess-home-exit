@@ -8,3 +8,6 @@ home-server/wireguard/templates/
 home-server/wireguard/wg_confs/wg0.conf
 vps/sing-box/config.json
 client/sing-box-phone.json
+
+# Cloudflare Origin certificate / key for the VPS inbound — never commit.
+vps/sing-box/certs/

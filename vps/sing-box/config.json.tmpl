@@ -11,24 +11,18 @@
       "listen_port": 443,
       "users": [
         {
-          "uuid": "${VLESS_UUID}",
-          "flow": "xtls-rprx-vision"
+          "uuid": "${VLESS_UUID}"
         }
       ],
       "tls": {
         "enabled": true,
-        "server_name": "www.microsoft.com",
-        "reality": {
-          "enabled": true,
-          "handshake": {
-            "server": "www.microsoft.com",
-            "server_port": 443
-          },
-          "private_key": "${REALITY_PRIVATE_KEY}",
-          "short_id": [
-            "${REALITY_SHORT_ID}"
-          ]
-        }
+        "server_name": "${CF_DOMAIN}",
+        "certificate_path": "/etc/sing-box/certs/cert.pem",
+        "key_path": "/etc/sing-box/certs/key.pem"
+      },
+      "transport": {
+        "type": "ws",
+        "path": "${WS_PATH}"
       }
     }
   ],

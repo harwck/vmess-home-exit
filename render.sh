@@ -14,7 +14,7 @@ set +a
 
 # Every variable the templates reference. Kept explicit so envsubst only
 # substitutes these (a bare `envsubst` would eat any other $… in the files).
-VARS=(VPS_IP VLESS_UUID REALITY_PRIVATE_KEY REALITY_PUBLIC_KEY REALITY_SHORT_ID SS_PASSWORD \
+VARS=(VPS_IP CF_DOMAIN WS_PATH VLESS_UUID \
       VPS_WG_PRIVATE_KEY VPS_WG_PUBLIC_KEY HOME_WG_PRIVATE_KEY HOME_WG_PUBLIC_KEY)
 
 # Fail loudly if any required value is empty.

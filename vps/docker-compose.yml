@@ -3,14 +3,17 @@ services:
     image: ghcr.io/sagernet/sing-box:v1.13.13
     container_name: ss-tunnel-vps
     restart: unless-stopped
-    # sing-box runs a VLESS+REALITY inbound and a userspace WireGuard endpoint
+    # sing-box runs a VLESS+WebSocket+TLS inbound and a userspace WireGuard endpoint
     # (system=false, gVisor stack) so it needs no privileged kernel access. Ports
     # must be reachable from the public internet.
     ports:
-      - "443:443/tcp"       # VLESS+REALITY (phone -> VPS); real TLS 1.3 to www.microsoft.com
-      - "51820:51820/udp"   # WireGuard listener (home server dials in here)
+      - "443:443/tcp"       # VLESS+WS+TLS (phone -> Cloudflare -> VPS); HTTPS for your domain
+      - "51820:51820/udp"   # WireGuard listener (home server dials in here, direct to VPS IP)
     volumes:
       - ./sing-box/config.json:/etc/sing-box/config.json:ro
+      # Cloudflare Origin certificate for ${CF_DOMAIN} (cert.pem + key.pem). Not
+      # committed — see README "TLS / Cloudflare origin certificate".
+      - ./sing-box/certs:/etc/sing-box/certs:ro
     command: ["-D", "/var/lib/sing-box", "-C", "/etc/sing-box", "run"]
     logging:
       driver: "json-file"

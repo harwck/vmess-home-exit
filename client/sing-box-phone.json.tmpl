@@ -51,21 +51,22 @@
     {
       "type": "vless",
       "tag": "proxy",
-      "server": "${VPS_IP}",
+      "server": "${CF_DOMAIN}",
       "server_port": 443,
       "uuid": "${VLESS_UUID}",
-      "flow": "xtls-rprx-vision",
       "tls": {
         "enabled": true,
-        "server_name": "www.microsoft.com",
+        "server_name": "${CF_DOMAIN}",
         "utls": {
           "enabled": true,
           "fingerprint": "chrome"
-        },
-        "reality": {
-          "enabled": true,
-          "public_key": "${REALITY_PUBLIC_KEY}",
-          "short_id": "${REALITY_SHORT_ID}"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "${WS_PATH}",
+        "headers": {
+          "Host": "${CF_DOMAIN}"
         }
       }
     },
