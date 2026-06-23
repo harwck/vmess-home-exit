@@ -53,9 +53,9 @@
       "tag": "proxy",
       "server": "${VPS_IP}",
       "server_port": 443,
-      "network": "tcp",
       "method": "2022-blake3-aes-128-gcm",
-      "password": "${SS_PASSWORD}"
+      "password": "${SS_PASSWORD}",
+      "udp_over_tcp": true
     },
     {
       "type": "direct",
