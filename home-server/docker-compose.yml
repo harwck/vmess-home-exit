@@ -13,6 +13,10 @@ services:
     volumes:
       - ./wireguard:/config
       - /lib/modules:/lib/modules:ro
+      # Tunnel watchdog: a custom-init hook installs the wg-watchdog cron line.
+      # (This image ships no /defaults/crontabs/root, so a /config crontab is
+      # ignored; the custom-cont-init.d hook is the version-stable mechanism.)
+      - ./wireguard/custom-cont-init.d:/custom-cont-init.d:ro
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
