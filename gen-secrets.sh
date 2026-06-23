@@ -35,6 +35,9 @@ echo "Generating secrets..."
 VLESS_UUID=$(singbox generate uuid)
 REALITY_SHORT_ID=$(singbox generate rand 8 --hex)
 
+# Shadowsocks 2022 (2022-blake3-aes-128-gcm) pre-shared key: 16 bytes, base64.
+SS_PASSWORD=$(singbox generate rand 16 --base64)
+
 reality=$(singbox generate reality-keypair)
 REALITY_PRIVATE_KEY=$(printf '%s\n' "$reality" | awk '/PrivateKey/{print $2}')
 REALITY_PUBLIC_KEY=$(printf '%s\n' "$reality" | awk '/PublicKey/{print $2}')
@@ -43,7 +46,7 @@ read -r VPS_WG_PRIVATE_KEY VPS_WG_PUBLIC_KEY < <(gen_wg)
 read -r HOME_WG_PRIVATE_KEY HOME_WG_PUBLIC_KEY < <(gen_wg)
 
 # Sanity: nothing came back empty.
-for v in VLESS_UUID REALITY_SHORT_ID REALITY_PRIVATE_KEY REALITY_PUBLIC_KEY \
+for v in VLESS_UUID REALITY_SHORT_ID REALITY_PRIVATE_KEY REALITY_PUBLIC_KEY SS_PASSWORD \
          VPS_WG_PRIVATE_KEY VPS_WG_PUBLIC_KEY HOME_WG_PRIVATE_KEY HOME_WG_PUBLIC_KEY; do
   [ -n "${!v}" ] || { echo "ERROR: generation produced empty $v" >&2; exit 1; }
 done
@@ -69,6 +72,9 @@ VLESS_UUID=${VLESS_UUID}
 REALITY_PRIVATE_KEY=${REALITY_PRIVATE_KEY}
 REALITY_PUBLIC_KEY=${REALITY_PUBLIC_KEY}
 REALITY_SHORT_ID=${REALITY_SHORT_ID}
+
+# Shadowsocks 2022 (shared pre-shared key, used by both VPS inbound and phone outbound)
+SS_PASSWORD=${SS_PASSWORD}
 
 # WireGuard keypairs
 VPS_WG_PRIVATE_KEY=${VPS_WG_PRIVATE_KEY}
