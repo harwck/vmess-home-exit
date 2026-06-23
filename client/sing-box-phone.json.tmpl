@@ -51,12 +51,12 @@
     {
       "type": "vless",
       "tag": "proxy",
-      "server": "${CF_DOMAIN}",
+      "server": "${DOMAIN}",
       "server_port": 443,
       "uuid": "${VLESS_UUID}",
       "tls": {
         "enabled": true,
-        "server_name": "${CF_DOMAIN}",
+        "server_name": "${DOMAIN}",
         "utls": {
           "enabled": true,
           "fingerprint": "chrome"
@@ -66,7 +66,7 @@
         "type": "ws",
         "path": "${WS_PATH}",
         "headers": {
-          "Host": "${CF_DOMAIN}"
+          "Host": "${DOMAIN}"
         }
       }
     },

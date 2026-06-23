@@ -16,9 +16,14 @@
       ],
       "tls": {
         "enabled": true,
-        "server_name": "${CF_DOMAIN}",
-        "certificate_path": "/etc/sing-box/certs/cert.pem",
-        "key_path": "/etc/sing-box/certs/key.pem"
+        "server_name": "${DOMAIN}",
+        "acme": {
+          "domain": [
+            "${DOMAIN}"
+          ],
+          "email": "${ACME_EMAIL}",
+          "data_directory": "/var/lib/sing-box/acme"
+        }
       },
       "transport": {
         "type": "ws",

@@ -7,13 +7,14 @@ services:
     # (system=false, gVisor stack) so it needs no privileged kernel access. Ports
     # must be reachable from the public internet.
     ports:
-      - "443:443/tcp"       # VLESS+WS+TLS (phone -> Cloudflare -> VPS); HTTPS for your domain
+      - "443:443/tcp"       # VLESS+WS+TLS (phone -> VPS); HTTPS for your domain
+      - "80:80/tcp"         # Let's Encrypt ACME HTTP-01 challenge (cert issue/renew)
       - "51820:51820/udp"   # WireGuard listener (home server dials in here, direct to VPS IP)
     volumes:
       - ./sing-box/config.json:/etc/sing-box/config.json:ro
-      # Cloudflare Origin certificate for ${CF_DOMAIN} (cert.pem + key.pem). Not
-      # committed — see README "TLS / Cloudflare origin certificate".
-      - ./sing-box/certs:/etc/sing-box/certs:ro
+      # Persist Let's Encrypt certs/account across restarts so sing-box doesn't
+      # re-request on every boot (Let's Encrypt rate-limits issuance).
+      - ./sing-box/data:/var/lib/sing-box
     command: ["-D", "/var/lib/sing-box", "-C", "/etc/sing-box", "run"]
     logging:
       driver: "json-file"
