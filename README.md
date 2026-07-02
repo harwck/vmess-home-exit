@@ -6,12 +6,12 @@ port 443 that mimics a real website) to a public-IP **VPS**, which relays it ove
 source IP is your **residential home IP**.
 
 This is helpful for bypassing UDP blocks on Public Wi-Fi, it disguises all traffic as real HTTPS and dials to your VPS on port 443, 
-with TLS handshakes relayed from a real domain (e.g. `www.microsoft.com`) to defeat DPI and active probing.
+with TLS handshakes relayed from a real domain (e.g. `dl.google.com`) to defeat DPI and active probing.
 
 ```
  Phone (sing-box, TUN)  --VLESS+REALITY/TCP 443-->  VPS (public IP)  --WireGuard-->  Home server  -->  Internet
         all traffic        looks like HTTPS to        relay only                      NAT exit        residential IP
-                           www.microsoft.com
+                           dl.google.com
 ```
 
 The VPS only relays — it never exits to the Internet itself. sing-box on the VPS
@@ -22,7 +22,7 @@ single container with no privileged kernel access.
 
 The censored leg carries **no UDP on the wire** (it's a single TCP/TLS stream — app UDP
 like QUIC/DNS is multiplexed inside it) and is **indistinguishable from a real browser
-hitting `www.microsoft.com`**: REALITY relays the genuine TLS handshake of that domain,
+hitting `dl.google.com`**: REALITY relays the genuine TLS handshake of that domain,
 so the certificate is authentic and active probing just hits the real site. This defeats
 both UDP-targeted censorship and DPI/TLS-fingerprinting.
 
@@ -88,7 +88,7 @@ unsubstituted, so a half-filled `.env` can't produce a broken config.
 | `HOME_WG_PRIVATE_KEY` | `wg0.conf` (`[Interface] PrivateKey`) |
 | `HOME_WG_PUBLIC_KEY` | `config.json` (peer `public_key`) |
 
-Re-run `./render.sh` any time you rotate a key. Handshake / SNI is `www.microsoft.com`;
+Re-run `./render.sh` any time you rotate a key. Handshake / SNI is `dl.google.com`;
 tunnel addresses are VPS `10.10.0.1`, home `10.10.0.2`.
 
 ## You must adapt to your environment
@@ -142,7 +142,7 @@ A healthy `wg` shows a recent handshake with the VPS peer and **both** rx and tx
 
 | Leg | Transport | Why |
 |-----|-----------|-----|
-| Phone → VPS | **VLESS+REALITY** over TCP 443; app UDP multiplexed inside the TLS stream | Censored leg looks like real HTTPS to `www.microsoft.com`; no UDP on the wire; survives DPI + active probing. |
+| Phone → VPS | **VLESS+REALITY** over TCP 443; app UDP multiplexed inside the TLS stream | Censored leg looks like real HTTPS to `dl.google.com`; no UDP on the wire; survives DPI + active probing. |
 | VPS → Home | **WireGuard** (UDP) | Clean network between datacenter and home; WireGuard is fast and simple here. |
 | Home → Internet | NAT masquerade out residential WAN | Exit point — your public IP is your home IP. |
 
