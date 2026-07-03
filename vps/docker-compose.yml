@@ -1,6 +1,6 @@
 services:
   sing-box:
-    image: ghcr.io/sagernet/sing-box:v1.13.13
+    image: ghcr.io/sagernet/sing-box:v1.13.14
     container_name: ss-tunnel-vps
     restart: unless-stopped
     # sing-box runs a VLESS+REALITY inbound and a userspace WireGuard endpoint
